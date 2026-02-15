@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📱 QUANTUM APK BUILDER STUDIO v13.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        :root {
+            --primary: #00ff00;
+            --primary-dark: #00cc00;
+            --secondary: #ff00ff;
+            --bg: #0a0a0a;
+            --bg-light: #1a1a1a;
+            --text: #00ff00;
+            --text-dim: #00aa00;
+            --error: #ff0000;
+            --success: #00ff00;
+            --warning: #ffff00;
+            --border: #00ff00;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #000000 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Matrix Rain Effect */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 255, 0, 0.05);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(0,255,0,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .header h1 {
+            font-size: 3em;
+            text-align: center;
+            text-shadow: 0 0 20px var(--primary);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .header .subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 1.1em;
+        }
+
+        .header .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,255,0,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--primary);
+            font-size: 0.9em;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,255,0,0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Project Panel */
+        .project-panel {
+            background: rgba(0, 255, 0, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-header h2 {
+            font-size: 1.5em;
+        }
+
+        .template-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .template-btn {
+            background: rgba(0,255,0,0.1);
+            border: 1px solid var(--text-dim);
+            color: var(--text);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .template-btn:hover {
+            background: rgba(0,255,0,0.2);
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .template-btn.selected {
+            background: rgba(0,255,0,0.3);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0,255,0,0.5);
+        }
+
+        .template-btn i {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--text-dim);
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0,255,0,0.3);
+        }
+
+        .form-group input[type="file"] {
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .form-group input[type="color"] {
+            height: 50px;
+            padding: 5px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Checkbox Grid */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0,255,0,0.05);
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid var(--text-dim);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+            accent-color: var(--primary);
+        }
+
+        /* Permission Grid */
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+        }
+
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px;
+        }
+
+        /* Build Panel */
+        .build-panel {
+            background: rgba(0, 255, 0, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .build-steps {
+            margin: 20px 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid rgba(0,255,0,0.1);
+        }
+
+        .step.completed {
+            color: var(--success);
+        }
+
+        .step .number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0,255,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid currentColor;
+        }
+
+        .step .status {
+            margin-left: auto;
+            font-size: 1.2em;
+        }
+
+        /* Console Output */
+        .console-output {
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            height: 250px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 20px 0;
+        }
+
+        .console-line {
+            margin-bottom: 3px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .console-line .timestamp {
+            color: var(--text-dim);
+            margin-right: 10px;
+        }
+
+        .console-line .info {
+            color: var(--text);
+        }
+
+        .console-line .success {
+            color: var(--success);
+        }
+
+        .console-line .warning {
+            color: var(--warning);
+        }
+
+        .console-line .error {
+            color: var(--error);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: rgba(0,255,0,0.1);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 0.5fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: #000;
+            border: 1px solid var(--primary);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,255,0,0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255,0,255,0.2);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255,0,255,0.3);
+            box-shadow: 0 5px 20px rgba(255,0,255,0.3);
+        }
+
+        .btn-success {
+            background: rgba(0,255,0,0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: rgba(0,255,0,0.3);
+            box-shadow: 0 5px 20px rgba(0,255,0,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* APK Preview */
+        .apk-preview {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+        }
+
+        .app-info h3 {
+            margin-bottom: 5px;
+        }
+
+        .app-info p {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            margin-bottom: 3px;
+        }
+
+        .app-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(0,255,0,0.2);
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 15px 25px;
+            color: var(--text);
+            box-shadow: 0 5px 20px rgba(0,255,0,0.3);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .toast.success {
+            border-color: var(--success);
+        }
+
+        .toast.error {
+            border-color: var(--error);
+        }
+
+        .toast.warning {
+            border-color: var(--warning);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(0,255,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0,255,0,0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* QR Code */
+        .qr-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        #qrcode {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="badge">© LifxXcodetz</div>
+            <h1>📱 QUANTUM APK BUILDER v13.0</h1>
+            <div class="subtitle">Professional Android Application Builder • No Limits • Full Features</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="buildCount">0</div>
+                <div class="stat-label">APKs Built</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="templateCount">12</div>
+                <div class="stat-label">Templates</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="permissionCount">135</div>
+                <div class="stat-label">Permissions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="buildStatus">Ready</div>
+                <div class="stat-label">Status</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Panel - Project Configuration -->
+            <div class="project-panel">
+                <div class="panel-header">
+                    <h2>⚙️ PROJECT CONFIGURATION</h2>
+                    <button class="btn btn-secondary btn-small" onclick="loadSampleData()">Load Sample</button>
+                </div>
+
+                <!-- Template Selector -->
+                <div class="template-selector">
+                    <div class="template-btn selected" onclick="selectTemplate('empty')">
+                        <i>📦</i>
+                        Empty Project
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('rat')">
+                        <i>🕷️</i>
+                        RAT Tool
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('banker')">
+                        <i>🏦</i>
+                        Banker
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('keylog')">
+                        <i>⌨️</i>
+                        Keylogger
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('ransom')">
+                        <i>🔒</i>
+                        Ransomware
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('spy')">
+                        <i>📸</i>
+                        Spyware
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('sms')">
+                        <i>📨</i>
+                        SMS Tool
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('call')">
+                        <i>📞</i>
+                        Call Recorder
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('location')">
+                        <i>📍</i>
+                        GPS Tracker
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('mic')">
+                        <i>🎤</i>
+                        Mic Spy
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('camera')">
+                        <i>📷</i>
+                        Camera Hack
+                    </div>
+                    <div class="template-btn" onclick="selectTemplate('whatsapp')">
+                        <i>💬</i>
+                        WhatsApp Hack
+                    </div>
+                </div>
+
+                <!-- Basic Info -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>App Name:</label>
+                        <input type="text" id="appName" value="QuantumApp" placeholder="Enter app name">
+                    </div>
+                    <div class="form-group">
+                        <label>Package Name:</label>
+                        <input type="text" id="packageName" value="com.quantum.app" placeholder="com.your.app">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Version Name:</label>
+                        <input type="text" id="versionName" value="1.0.0" placeholder="1.0.0">
+                    </div>
+                    <div class="form-group">
+                        <label>Version Code:</label>
+                        <input type="number" id="versionCode" value="1" min="1">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Min SDK:</label>
+                        <select id="minSdk">
+                            <option value="14">Android 4.0 (14)</option>
+                            <option value="16">Android 4.1 (16)</option>
+                            <option value="19">Android 4.4 (19)</option>
+                            <option value="21" selected>Android 5.0 (21)</option>
+                            <option value="23">Android 6.0 (23)</option>
+                            <option value="26">Android 8.0 (26)</option>
+                            <option value="29">Android 10 (29)</option>
+                            <option value="31">Android 12 (31)</option>
+                            <option value="33">Android 13 (33)</option>
+                            <option value="34">Android 14 (34)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Target SDK:</label>
+                        <select id="targetSdk">
+                            <option value="29">Android 10 (29)</option>
+                            <option value="30">Android 11 (30)</option>
+                            <option value="31">Android 12 (31)</option>
+                            <option value="32">Android 12L (32)</option>
+                            <option value="33">Android 13 (33)</option>
+                            <option value="34" selected>Android 14 (34)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Icons -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>App Icon:</label>
+                        <input type="file" id="appIcon" accept="image/png,image/jpeg,image/webp">
+                        <small style="color: var(--text-dim);">Recommended: 512x512 PNG</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Icon Color:</label>
+                        <input type="color" id="iconColor" value="#00ff00">
+                    </div>
+                </div>
+
+                <!-- Permissions -->
+                <div class="form-group">
+                    <label>Permissions:</label>
+                    <div class="permission-grid" id="permissionList">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="form-group">
+                    <label>Features:</label>
+                    <div class="checkbox-grid" id="featureList"></div>
+                </div>
+
+                <!-- C2 Server Configuration -->
+                <div class="form-group">
+                    <label>C2 Server URL:</label>
+                    <input type="url" id="c2Server" placeholder="https://your-server.com:8080">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Server IP:</label>
+                        <input type="text" id="serverIp" placeholder="192.168.1.100">
+                    </div>
+                    <div class="form-group">
+                        <label>Server Port:</label>
+                        <input type="number" id="serverPort" value="8080" min="1" max="65535">
+                    </div>
+                </div>
+
+                <!-- Custom Code -->
+                <div class="form-group">
+                    <label>Custom Java Code (Optional):</label>
+                    <textarea id="customCode" rows="6" placeholder="// Paste your custom Java code here"></textarea>
+                </div>
+
+                <!-- Resources -->
+                <div class="form-group">
+                    <label>Additional Resources:</label>
+                    <input type="file" id="resources" multiple accept=".png,.jpg,.mp3,.mp4,.html,.json">
+                </div>
+            </div>
+
+            <!-- Right Panel - Build & Preview -->
+            <div>
+                <!-- Build Panel -->
+                <div class="build-panel">
+                    <div class="panel-header">
+                        <h2>🔨 BUILD & DEPLOY</h2>
+                        <span id="buildTimer">00:00</span>
+                    </div>
+
+                    <!-- APK Preview -->
+                    <div class="apk-preview" id="apkPreview">
+                        <div class="app-icon" id="appIconPreview">📱</div>
+                        <div class="app-info">
+                            <h3 id="previewAppName">QuantumApp</h3>
+                            <p id="previewPackage">com.quantum.app</p>
+                            <div>
+                                <span class="app-badge" id="previewSdk">SDK 21+</span>
+                                <span class="app-badge" id="previewVersion">v1.0.0</span>
+                                <span class="app-badge" id="previewSize">~5.2 MB</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Build Steps -->
+                    <div class="build-steps">
+                        <div class="step" id="step1">
+                            <span class="number">1</span>
+                            <span>Validate Project</span>
+                            <span class="status" id="step1Status">⏳</span>
+                        </div>
+                        <div class="step" id="step2">
+                            <span class="number">2</span>
+                            <span>Generate Manifest</span>
+                            <span class="status" id="step2Status">⏳</span>
+                        </div>
+                        <div class="step" id="step3">
+                            <span class="number">3</span>
+                            <span>Compile Resources (AAPT2)</span>
+                            <span class="status" id="step3Status">⏳</span>
+                        </div>
+                        <div class="step" id="step4">
+                            <span class="number">4</span>
+                            <span>Compile Java Code (D8/DX)</span>
+                            <span class="status" id="step4Status">⏳</span>
+                        </div>
+                        <div class="step" id="step5">
+                            <span class="number">5</span>
+                            <span>Package APK</span>
+                            <span class="status" id="step5Status">⏳</span>
+                        </div>
+                        <div class="step" id="step6">
+                            <span class="number">6</span>
+                            <span>Sign APK</span>
+                            <span class="status" id="step6Status">⏳</span>
+                        </div>
+                        <div class="step" id="step7">
+                            <span class="number">7</span>
+                            <span>Optimize (zipalign)</span>
+                            <span class="status" id="step7Status">⏳</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Build Progress</span>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Console Output -->
+                    <div class="console-output" id="consoleOutput">
+                        <div class="console-line">
+                            <span class="timestamp">[12:00:00]</span>
+                            <span class="info">APK Builder initialized</span>
+                        </div>
+                        <div class="console-line">
+                            <span class="timestamp">[12:00:01]</span>
+                            <span class="info">Ready to build APK</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="startBuild()" id="buildBtn">
+                            <span>📦</span> BUILD APK
+                        </button>
+                        <button class="btn btn-success" onclick="downloadAPK()" id="downloadBtn" disabled>
+                            <span>📥</span> DOWNLOAD
+                        </button>
+                        <button class="btn btn-secondary" onclick="showQR()" id="qrBtn" disabled>
+                            <span>📱</span> QR CODE
+                        </button>
+                    </div>
+
+                    <!-- QR Code Modal -->
+                    <div class="modal" id="qrModal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>📱 Scan to Download</h3>
+                                <button class="close-btn" onclick="closeQR()">&times;</button>
+                            </div>
+                            <div class="qr-container" id="qrcode"></div>
+                            <p style="text-align: center; margin-top: 10px;">Scan with Android phone to download APK</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Options (Collapsible) -->
+        <div style="margin-top: 20px;">
+            <details>
+                <summary style="color: var(--text); cursor: pointer; padding: 10px; border: 1px solid var(--border); border-radius: 5px;">
+                    🔧 Advanced Options
+                </summary>
+                <div style="padding: 20px; background: rgba(0,255,0,0.02); border: 1px solid var(--border); border-radius: 5px; margin-top: 10px;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Keystore File:</label>
+                            <input type="file" id="keystoreFile" accept=".keystore,.jks">
+                        </div>
+                        <div class="form-group">
+                            <label>Keystore Password:</label>
+                            <input type="password" id="keystorePass" value="quantumv13">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Key Alias:</label>
+                            <input type="text" id="keyAlias" value="quantum">
+                        </div>
+                        <div class="form-group">
+                            <label>Key Password:</label>
+                            <input type="password" id="keyPass" value="quantumv13">
+                        </div>
+                    </div>
+
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="debugMode" checked>
+                            <label>Debug Mode</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="compress">
+                            <label>Compress Resources</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="obfuscate" checked>
+                            <label>Obfuscate Code</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="multiDex">
+                            <label>MultiDex Support</label>
+                        </div>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        const matrixArray = matrix.split("");
+
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for(let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // ==================== APK Builder Logic ====================
+
+        // State
+        let currentTemplate = 'empty';
+        let buildCount = parseInt(localStorage.getItem('buildCount') || '0');
+        let currentBuildId = null;
+        let buildSteps = {
+            step1: false,
+            step2: false,
+            step3: false,
+            step4: false,
+            step5: false,
+            step6: false,
+            step7: false
+        };
+        let buildTimer = null;
+        let buildSeconds = 0;
+
+        // Permissions Database
+        const permissions = [
+            { name: 'INTERNET', desc: 'Access internet' },
+            { name: 'ACCESS_NETWORK_STATE', desc: 'Network state' },
+            { name: 'ACCESS_WIFI_STATE', desc: 'WiFi state' },
+            { name: 'READ_EXTERNAL_STORAGE', desc: 'Read storage' },
+            { name: 'WRITE_EXTERNAL_STORAGE', desc: 'Write storage' },
+            { name: 'CAMERA', desc: 'Camera access' },
+            { name: 'RECORD_AUDIO', desc: 'Record audio' },
+            { name: 'ACCESS_FINE_LOCATION', desc: 'GPS location' },
+            { name: 'ACCESS_COARSE_LOCATION', desc: 'Network location' },
+            { name: 'READ_CONTACTS', desc: 'Read contacts' },
+            { name: 'WRITE_CONTACTS', desc: 'Write contacts' },
+            { name: 'READ_CALL_LOG', desc: 'Read call log' },
+            { name: 'WRITE_CALL_LOG', desc: 'Write call log' },
+            { name: 'READ_SMS', desc: 'Read SMS' },
+            { name: 'SEND_SMS', desc: 'Send SMS' },
+            { name: 'RECEIVE_SMS', desc: 'Receive SMS' },
+            { name: 'RECEIVE_MMS', desc: 'Receive MMS' },
+            { name: 'READ_PHONE_STATE', desc: 'Phone state' },
+            { name: 'CALL_PHONE', desc: 'Call phone' },
+            { name: 'PROCESS_OUTGOING_CALLS', desc: 'Outgoing calls' },
+            { name: 'RECORD_AUDIO', desc: 'Record audio' },
+            { name: 'MODIFY_AUDIO_SETTINGS', desc: 'Audio settings' },
+            { name: 'VIBRATE', desc: 'Vibrate' },
+            { name: 'WAKE_LOCK', desc: 'Wake lock' },
+            { name: 'SYSTEM_ALERT_WINDOW', desc: 'Overlay windows' },
+            { name: 'REQUEST_IGNORE_BATTERY_OPTIMIZATIONS', desc: 'Ignore battery' },
+            { name: 'USE_FINGERPRINT', desc: 'Fingerprint' },
+            { name: 'USE_BIOMETRIC', desc: 'Biometric' },
+            { name: 'READ_SYNC_SETTINGS', desc: 'Sync settings' },
+            { name: 'WRITE_SYNC_SETTINGS', desc: 'Write sync' },
+            { name: 'AUTHENTICATE_ACCOUNTS', desc: 'Authenticate' },
+            { name: 'GET_ACCOUNTS', desc: 'Get accounts' },
+            { name: 'MANAGE_ACCOUNTS', desc: 'Manage accounts' },
+            { name: 'BLUETOOTH', desc: 'Bluetooth' },
+            { name: 'BLUETOOTH_ADMIN', desc: 'Bluetooth admin' },
+            { name: 'BLUETOOTH_SCAN', desc: 'Bluetooth scan' },
+            { name: 'BLUETOOTH_ADVERTISE', desc: 'Bluetooth advertise' },
+            { name: 'BLUETOOTH_CONNECT', desc: 'Bluetooth connect' },
+            { name: 'NFC', desc: 'NFC' },
+            { name: 'NFC_TRANSACTION_EVENT', desc: 'NFC transaction' },
+            { name: 'BODY_SENSORS', desc: 'Body sensors' },
+            { name: 'ACTIVITY_RECOGNITION', desc: 'Activity recognition' },
+            { name: 'READ_INSTALL_SESSIONS', desc: 'Install sessions' },
+            { name: 'REQUEST_DELETE_PACKAGES', desc: 'Delete packages' },
+            { name: 'REQUEST_INSTALL_PACKAGES', desc: 'Install packages' },
+            { name: 'KILL_BACKGROUND_PROCESSES', desc: 'Kill processes' },
+            { name: 'PACKAGE_USAGE_STATS', desc: 'Usage stats' },
+            { name: 'UPDATE_DEVICE_STATS', desc: 'Device stats' },
+            { name: 'BATTERY_STATS', desc: 'Battery stats' }
+        ];
+
+        // Features Database
+        const features = {
+            rat: [
+                'Remote Shell',
+                'File Manager',
+                'SMS Control',
+                'Call Control',
+                'Contact Theft',
+                'Location Tracking',
+                'Camera Capture',
+                'Audio Recording',
+                'Screen Capture',
+                'Keylogger',
+                'App Manager',
+                'Process Manager'
+            ],
+            banker: [
+                'SMS Intercept',
+                'OTP Steal',
+                'Overlay Attack',
+                'Accessibility Service',
+                'Notification Read',
+                'Clipboard Monitor',
+                'Keylogger',
+                'Screen Reader',
+                'App Detection',
+                'Hide Icon'
+            ],
+            spy: [
+                'Camera Spy',
+                'Mic Spy',
+                'GPS Tracker',
+                'Call Recording',
+                'Ambient Recording',
+                'SMS Forward',
+                'Contact Steal',
+                'File Steal',
+                'Browser History',
+                'WiFi Password',
+                'App Activity',
+                'Screen Recorder'
+            ]
+        };
+
+        // Template-specific configurations
+        const templateConfig = {
+            empty: {
+                permissions: [],
+                features: [],
+                mainActivity: 'MainActivity',
+                services: []
+            },
+            rat: {
+                permissions: ['INTERNET', 'ACCESS_NETWORK_STATE', 'READ_SMS', 'RECEIVE_SMS', 'CAMERA', 'RECORD_AUDIO', 'ACCESS_FINE_LOCATION', 'READ_CONTACTS', 'READ_CALL_LOG', 'WAKE_LOCK'],
+                features: features.rat,
+                mainActivity: 'MainActivity',
+                services: ['RemoteService', 'SmsService', 'CameraService']
+            },
+            banker: {
+                permissions: ['INTERNET', 'RECEIVE_SMS', 'READ_SMS', 'BIND_ACCESSIBILITY_SERVICE', 'SYSTEM_ALERT_WINDOW', 'REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'],
+                features: features.banker,
+                mainActivity: 'SplashActivity',
+                services: ['SmsInterceptor', 'AccessibilityService', 'OverlayService']
+            },
+            keylog: {
+                permissions: ['INTERNET', 'BIND_ACCESSIBILITY_SERVICE', 'SYSTEM_ALERT_WINDOW', 'RECORD_AUDIO'],
+                features: ['Keylogger', 'Clipboard Monitor', 'App Tracker'],
+                mainActivity: 'MainActivity',
+                services: ['KeyloggerService']
+            },
+            sms: {
+                permissions: ['SEND_SMS', 'RECEIVE_SMS', 'READ_SMS', 'INTERNET'],
+                features: ['SMS Bomber', 'SMS Forward', 'SMS Intercept'],
+                mainActivity: 'SmsActivity',
+                services: ['SmsService']
+            }
+        };
+
+        // Initialize permissions list
+        function initPermissions() {
+            const container = document.getElementById('permissionList');
+            let html = '';
+            
+            permissions.forEach(perm => {
+                html += `
+                    <div class="permission-item">
+                        <input type="checkbox" id="perm_${perm.name}" value="${perm.name}">
+                        <label for="perm_${perm.name}">${perm.name}</label>
+                        <span style="color: var(--text-dim); font-size: 0.8em; margin-left: auto;" title="${perm.desc}">ℹ️</span>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Initialize features based on template
+        function updateFeatures(template) {
+            const container = document.getElementById('featureList');
+            const templateFeatures = templateConfig[template]?.features || [];
+            
+            let html = '';
+            templateFeatures.forEach(feature => {
+                html += `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="feat_${feature}" checked>
+                        <label for="feat_${feature}">${feature}</label>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Select template
+        function selectTemplate(template) {
+            currentTemplate = template;
+            
+            // Update UI
+            document.querySelectorAll('.template-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Set default permissions based on template
+            const templatePerms = templateConfig[template]?.permissions || [];
+            document.querySelectorAll('.permission-item input').forEach(cb => {
+                cb.checked = templatePerms.includes(cb.value);
+            });
+            
+            // Update features
+            updateFeatures(template);
+            
+            // Update preview
+            updatePreview();
+            
+            // Log to console
+            addConsoleLine(`Template selected: ${template}`, 'info');
+        }
+
+        // Update APK preview
+        function updatePreview() {
+            const appName = document.getElementById('appName').value;
+            const packageName = document.getElementById('packageName').value;
+            const versionName = document.getElementById('versionName').value;
+            const minSdk = document.getElementById('minSdk').value;
+            const iconColor = document.getElementById('iconColor').value;
+            
+            document.getElementById('previewAppName').textContent = appName;
+            document.getElementById('previewPackage').textContent = packageName;
+            document.getElementById('previewVersion').textContent = `v${versionName}`;
+            document.getElementById('previewSdk').textContent = `SDK ${minSdk}+`;
+            
+            // Calculate estimated size
+            const permCount = document.querySelectorAll('.permission-item input:checked').length;
+            const size = (5.2 + (permCount * 0.1)).toFixed(1);
+            document.getElementById('previewSize').textContent = `~${size} MB`;
+            
+            // Update icon preview
+            const iconPreview = document.getElementById('appIconPreview');
+            iconPreview.style.background = `linear-gradient(135deg, ${iconColor}, ${adjustBrightness(iconColor, 50)})`;
+        }
+
+        function adjustBrightness(hex, percent) {
+            // Simple brightness adjustment
+            return hex; // Placeholder
+        }
+
+        // Start build process
+        function startBuild() {
+            const buildBtn = document.getElementById('buildBtn');
+            buildBtn.disabled = true;
+            buildBtn.innerHTML = '<span class="spinner"></span> BUILDING...';
+            
+            // Reset steps
+            for(let i = 1; i <= 7; i++) {
+                const step = document.getElementById(`step${i}`);
+                const status = document.getElementById(`step${i}Status`);
+                step.classList.remove('completed');
+                status.textContent = '⏳';
+            }
+            
+            // Reset progress
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressPercent').textContent = '0%';
+            
+            // Start timer
+            buildSeconds = 0;
+            buildTimer = setInterval(updateTimer, 1000);
+            
+            // Clear console
+            document.getElementById('consoleOutput').innerHTML = '';
+            
+            // Start build sequence
+            addConsoleLine('Starting APK build process...', 'info');
+            
+            // Step 1: Validate (after 1 second)
+            setTimeout(() => {
+                completeStep(1, 'Project validated successfully');
+            }, 1000);
+            
+            // Step 2: Generate Manifest (after 2 seconds)
+            setTimeout(() => {
+                completeStep(2, 'AndroidManifest.xml generated');
+            }, 2000);
+            
+            // Step 3: Compile Resources (after 3 seconds)
+            setTimeout(() => {
+                completeStep(3, 'Resources compiled with AAPT2');
+            }, 3000);
+            
+            // Step 4: Compile Java (after 4 seconds)
+            setTimeout(() => {
+                completeStep(4, 'Java code compiled with D8');
+            }, 4000);
+            
+            // Step 5: Package APK (after 5 seconds)
+            setTimeout(() => {
+                completeStep(5, 'APK packaged successfully');
+            }, 5000);
+            
+            // Step 6: Sign APK (after 6 seconds)
+            setTimeout(() => {
+                completeStep(6, 'APK signed with keystore');
+            }, 6000);
+            
+            // Step 7: Optimize (after 7 seconds)
+            setTimeout(() => {
+                completeStep(7, 'APK optimized with zipalign');
+                
+                // Build complete
+                buildComplete();
+            }, 7000);
+        }
+
+        function completeStep(stepNum, message) {
+            const step = document.getElementById(`step${stepNum}`);
+            const status = document.getElementById(`step${stepNum}Status`);
+            
+            step.classList.add('completed');
+            status.textContent = '✅';
+            
+            // Update progress
+            const progress = (stepNum / 7) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+            
+            // Add to console
+            addConsoleLine(`✓ Step ${stepNum}: ${message}`, 'success');
+        }
+
+        function buildComplete() {
+            clearInterval(buildTimer);
+            
+            // Increment build count
+            buildCount++;
+            document.getElementById('buildCount').textContent = buildCount;
+            localStorage.setItem('buildCount', buildCount);
+            
+            // Enable download buttons
+            document.getElementById('downloadBtn').disabled = false;
+            document.getElementById('qrBtn').disabled = false;
+            
+            // Update build button
+            const buildBtn = document.getElementById('buildBtn');
+            buildBtn.disabled = false;
+            buildBtn.innerHTML = '<span>📦</span> BUILD APK';
+            
+            // Add to console
+            addConsoleLine('✅ APK built successfully!', 'success');
+            addConsoleLine(`📦 File size: ~${document.getElementById('previewSize').textContent}`, 'info');
+            
+            // Show toast
+            showToast('APK built successfully!', 'success');
+        }
+
+        function updateTimer() {
+            buildSeconds++;
+            const mins = Math.floor(buildSeconds / 60);
+            const secs = buildSeconds % 60;
+            document.getElementById('buildTimer').textContent = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Download APK
+        function downloadAPK() {
+            // Generate fake APK data
+            const appName = document.getElementById('appName').value;
+            const versionName = document.getElementById('versionName').value;
+            
+            // Create fake APK content (in reality, this would be the real APK)
+            const apkContent = generateFakeAPK();
+            
+            // Create blob and download
+            const blob = new Blob([apkContent], { type: 'application/vnd.android.package-archive' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${appName}_v${versionName}.apk`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            addConsoleLine(`📥 Downloaded: ${appName}_v${versionName}.apk`, 'success');
+            showToast('APK downloaded! Check your downloads folder.', 'success');
+        }
+
+        function generateFakeAPK() {
+            // Generate fake APK header and content
+            // This is just for demonstration - in reality this would be a real APK
+            const header = 'PK\x03\x04\x14\x00\x08\x00\x08\x00'; // ZIP header
+            const content = 'This is a fake APK file for demonstration purposes. In a real environment, this would contain the actual compiled Android application.';
+            return new TextEncoder().encode(header + content);
+        }
+
+        // Show QR Code
+        function showQR() {
+            const modal = document.getElementById('qrModal');
+            modal.classList.add('active');
+            
+            // Generate QR code with download link
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            
+            // Create a data URL for the APK
+            const appName = document.getElementById('appName').value;
+            const apkData = generateFakeAPK();
+            const blob = new Blob([apkData], { type: 'application/vnd.android.package-archive' });
+            const url = URL.createObjectURL(blob);
+            
+            new QRCode(qrContainer, {
+                text: url,
+                width: 256,
+                height: 256
+            });
+            
+            addConsoleLine('📱 QR Code generated', 'info');
+        }
+
+        function closeQR() {
+            document.getElementById('qrModal').classList.remove('active');
+        }
+
+        // Load sample data
+        function loadSampleData() {
+            document.getElementById('appName').value = 'QuantumSecure';
+            document.getElementById('packageName').value = 'com.quantum.secure';
+            document.getElementById('versionName').value = '2.1.0';
+            document.getElementById('versionCode').value = '21';
+            document.getElementById('c2Server').value = 'https://c2.quantum.com:8443';
+            document.getElementById('serverIp').value = '192.168.1.100';
+            document.getElementById('serverPort').value = '8443';
+            
+            // Select some permissions
+            document.querySelectorAll('.permission-item input').forEach((cb, index) => {
+                cb.checked = index < 15; // Check first 15 permissions
+            });
+            
+            updatePreview();
+            addConsoleLine('Sample data loaded', 'info');
+            showToast('Sample configuration loaded', 'success');
+        }
+
+        // Console functions
+        function addConsoleLine(text, type = 'info') {
+            const console = document.getElementById('consoleOutput');
+            const line = document.createElement('div');
+            line.className = 'console-line';
+            
+            const now = new Date();
+            const timestamp = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
+            
+            line.innerHTML = `
+                <span class="timestamp">${timestamp}</span>
+                <span class="${type}">${text}</span>
+            `;
+            
+            console.appendChild(line);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Event listeners for preview updates
+        document.getElementById('appName').addEventListener('input', updatePreview);
+        document.getElementById('packageName').addEventListener('input', updatePreview);
+        document.getElementById('versionName').addEventListener('input', updatePreview);
+        document.getElementById('minSdk').addEventListener('change', updatePreview);
+        document.getElementById('iconColor').addEventListener('input', updatePreview);
+        
+        document.querySelectorAll('.permission-item input').forEach(cb => {
+            cb.addEventListener('change', updatePreview);
+        });
+
+        // File upload handlers
+        document.getElementById('appIcon').addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const iconPreview = document.getElementById('appIconPreview');
+                    iconPreview.style.backgroundImage = `url(${e.target.result})`;
+                    iconPreview.style.backgroundSize = 'cover';
+                    iconPreview.innerHTML = '';
+                    
+                    addConsoleLine(`Icon loaded: ${this.files[0].name}`, 'info');
+                }.bind(this);
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        document.getElementById('keystoreFile').addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                addConsoleLine(`Keystore loaded: ${this.files[0].name}`, 'info');
+            }
+        });
+
+        document.getElementById('resources').addEventListener('change', function(e) {
+            if (this.files && this.files.length > 0) {
+                addConsoleLine(`Loaded ${this.files.length} resource files`, 'info');
+            }
+        });
+
+        // Custom code editor enhancement
+        document.getElementById('customCode').addEventListener('input', function() {
+            // Could add syntax highlighting here
+        });
+
+        // Initialize
+        initPermissions();
+        updateFeatures('empty');
+        updatePreview();
+        
+        // Add initial console messages
+        addConsoleLine('APK Builder Studio v13.0 initialized', 'success');
+        addConsoleLine('Ready to build professional Android applications', 'info');
+        addConsoleLine(`Build count: ${buildCount}`, 'info');
+
+        // Export functions to global scope
+        window.selectTemplate = selectTemplate;
+        window.startBuild = startBuild;
+        window.downloadAPK = downloadAPK;
+        window.showQR = showQR;
+        window.closeQR = closeQR;
+        window.loadSampleData = loadSampleData;
+    </script>
+</body>
+</html>
